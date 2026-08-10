@@ -11,19 +11,10 @@ from datetime import datetime
 from zoneinfo import ZoneInfo
 
 import database
-import os
 
 BASE_DIR = Path(__file__).parent
-
-# Real system Downloads folder, e.g. /home/<user>/Downloads on Linux/macOS,
-# C:\Users\<user>\Downloads on Windows. Override with the DOWNLOAD_DIR env
-# var if you ever want a custom location.
-DOWNLOADS_DIR = Path(os.environ.get("DOWNLOAD_DIR", Path.home() / "Downloads"))
-DOWNLOADS_DIR.mkdir(parents=True, exist_ok=True)
-
-# BASE_DIR = Path(__file__).parent
-# DOWNLOADS_DIR = BASE_DIR / "downloads"
-# DOWNLOADS_DIR.mkdir(exist_ok=True)
+DOWNLOADS_DIR = BASE_DIR / "downloads"
+DOWNLOADS_DIR.mkdir(exist_ok=True)
 
 KOLKATA = ZoneInfo("Asia/Kolkata")
 
