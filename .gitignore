@@ -1,0 +1,22 @@
+# Backend
+backend/__pycache__/
+backend/*.pyc
+backend/app.db
+backend/downloads/
+backend/.venv/
+backend/venv/
+backend/.env
+
+# Flutter
+flutter_app/build/
+flutter_app/.dart_tool/
+flutter_app/.flutter-plugins
+flutter_app/.flutter-plugins-dependencies
+flutter_app/.packages
+flutter_app/android/.gradle/
+flutter_app/ios/Pods/
+flutter_app/**/*.iml
+
+# OS / editor
+.DS_Store
+.vscode/
