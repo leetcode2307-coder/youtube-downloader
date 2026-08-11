@@ -11,12 +11,10 @@ class ApiException implements Exception {
 }
 
 class ApiService {
-  /// Android emulator -> host machine's localhost is 10.0.2.2
-  /// iOS simulator / desktop / web -> localhost works directly.
-  /// Change this if your backend runs on a different host.
-  // static const String baseUrl = 'http://10.0.2.2:8000';
-  // static const String baseUrl = 'http://localhost:8000'; // iOS sim / desktop
-  static const String baseUrl = 'https://youtube-downloader-1-j4yl.onrender.com/';
+  /// Deployed backend on Render. No trailing slash.
+  static const String baseUrl = 'https://youtube-downloader-1-j4yl.onrender.com';
+  // static const String baseUrl = 'http://10.0.2.2:8000';     // Android emulator, local backend
+  // static const String baseUrl = 'http://localhost:8000';    // iOS sim / desktop / web, local backend
 
   Future<String> startDownload(String url) async {
     final response = await http.post(

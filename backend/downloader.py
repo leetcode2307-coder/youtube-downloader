@@ -5,25 +5,26 @@ file path on disk. The video itself never passes through Python memory —
 yt-dlp writes straight to the downloads/ folder.
 """
 import asyncio
+import os
 import re
 from pathlib import Path
 from datetime import datetime
 from zoneinfo import ZoneInfo
 
 import database
-import os
 
 BASE_DIR = Path(__file__).parent
+DOWNLOADS_DIR = BASE_DIR / "downloads"
+DOWNLOADS_DIR.mkdir(exist_ok=True)
 
-# Real system Downloads folder, e.g. /home/<user>/Downloads on Linux/macOS,
-# C:\Users\<user>\Downloads on Windows. Override with the DOWNLOAD_DIR env
-# var if you ever want a custom location.
-DOWNLOADS_DIR = Path(os.environ.get("DOWNLOAD_DIR", Path.home() / "Downloads"))
-DOWNLOADS_DIR.mkdir(parents=True, exist_ok=True)
-
-# BASE_DIR = Path(__file__).parent
-# DOWNLOADS_DIR = BASE_DIR / "downloads"
-# DOWNLOADS_DIR.mkdir(exist_ok=True)
+# Optional: path to a Netscape-format cookies.txt exported from YOUR OWN
+# already-logged-in browser session. When present, yt-dlp presents these
+# cookies to YouTube so it can fetch videos your account can already see
+# (age-gated, or "sign in to confirm you're not a bot" checks). This does
+# NOT add any login/auth screen to the app itself — the app stays anonymous
+# and single-user; this only lets the server prove *its own* yt-dlp calls
+# come from an account you already control.
+COOKIES_FILE = Path(os.environ.get("COOKIES_FILE", BASE_DIR / "cookies.txt"))
 
 KOLKATA = ZoneInfo("Asia/Kolkata")
 
@@ -55,8 +56,12 @@ async def run_download(job_id: str, url: str):
         "-o", str(DOWNLOADS_DIR / "%(title)s.%(ext)s"),
         "--no-playlist",
         "--print", "after_move:filepath",
-        url,
     ]
+
+    if COOKIES_FILE.exists():
+        cmd += ["--cookies", str(COOKIES_FILE)]
+
+    cmd.append(url)
 
     try:
         process = await asyncio.create_subprocess_exec(
@@ -109,7 +114,9 @@ def _friendly_error(stderr: str) -> str:
     if "video unavailable" in lowered:
         return "Video unavailable"
     if "sign in to confirm" in lowered or "age" in lowered and "restrict" in lowered:
-        return "Age-restricted or requires sign-in"
+        if COOKIES_FILE.exists():
+            return "Age-restricted: your cookies.txt may be expired — re-export it"
+        return "Age-restricted or requires sign-in — add cookies.txt to enable (see README)"
     if "unable to download webpage" in lowered or "urlopen error" in lowered:
         return "Network error while contacting YouTube"
     if "unsupported url" in lowered:

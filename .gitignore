@@ -6,6 +6,9 @@ backend/downloads/
 backend/.venv/
 backend/venv/
 backend/.env
+# Live YouTube session cookies exported for yt-dlp (age-restricted video access).
+# Contains sensitive auth secrets — must NEVER be committed to version control.
+backend/cookies.txt
 
 # Flutter
 flutter_app/build/
